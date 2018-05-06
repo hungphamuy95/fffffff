@@ -5,33 +5,60 @@ class Board extends Component{
     constructor(props){
         super(props);
         this.state={
-            squares:Array(9).fill(null),
+            history:[{
+                squares:Array(9).fill(null)
+            }],
+            stepNumber:0,
             xIsNext:true
         };
     }
 
+    jumpTo(step){
+        this.setState({
+            stepNumber:step,
+            xIsNext:(step % 2) === 0
+        });
+        console.log(this.state);
+    }
+
     handleClick(i){
-        debugger;
-        const squares=this.state.squares.slice();
+        const history = this.state.history.slice(0, this.state.stepNumber + 1);
+        const current = history[this.state.stepNumber];
+        const squares = current.squares.slice();
         // Check xem các phần tử đã thẳng hàng và có tồn tại phần tử trong mảng trên state hay chưa
         if(calculateWinner(squares)||squares[i]){
-            debugger;
             return;
         }
         squares[i]=this.state.xIsNext?'X':'O'
         this.setState({
-            squares:squares,
+            history: history.concat([{
+                squares:squares
+            }]),
+            stepNumber: history.length,
             xIsNext:!this.state.xIsNext
         });
-        debugger;
     }
 
     renderSquare(i){
-        return <Square value={this.state.squares[i]} onClick={()=>this.handleClick(i)}></Square>
+        const history = this.state.history;
+        const current = history[this.state.stepNumber];
+        return <Square value={current.squares[i]} onClick={()=>this.handleClick(i)}></Square>
     }
 
     render(){
-        const winner = calculateWinner(this.state.squares);
+        const history = this.state.history;
+        const current = history[history.length - 1];
+        const winner = calculateWinner(current.squares);
+        const moves = history.map((step, move)=>{
+            const desc = move?
+            'Go to move #'+move:
+            'Go to game start';
+            return(
+                <li key={move}>
+                    <button onClick={()=>this.jumpTo(move)}>{desc}</button>
+                </li>
+            )
+        });
         let status;
         if(winner){
             status='Winner: '+winner;
@@ -56,13 +83,15 @@ class Board extends Component{
                     {this.renderSquare(7)}
                     {this.renderSquare(8)}
                 </div>
+                <div className='game-info'>
+                    <ol>{moves}</ol>
+                </div>
             </div>
         )
     }
 }
 
 function calculateWinner(squares){
-    //debugger;
     const lines=[
         [0,1,2],
         [3,4,5],
@@ -76,10 +105,8 @@ function calculateWinner(squares){
     for(let i=0; i<lines.length;i++){
         const [a,b,c]=lines[i];
         if(squares[a]&&squares[a]===squares[b]&&squares[a]===squares[c]){
-            //debugger;
             return squares[a];
         }
-        //debugger;
         //return null;
     }
 }

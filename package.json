@@ -3,8 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@uifabric/icons": "^5.7.1",
+    "auth0-js": "^9.5.1",
+    "axios": "^0.18.0",
+    "jwt-decode": "^2.2.0",
+    "office-ui-fabric-react": "^5.96.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4"
   },
   "scripts": {
